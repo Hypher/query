@@ -23,6 +23,17 @@
   
     $ curl http://twitter.com | query .article '#timeline' hasClass statuses
     true
+    
+    $ echo $?
+    0
+
+  Exit status for bools:
+  
+    $ echo '<div class="foo bar"></div>' | ./index.js div hasClass baz
+    false
+    
+    $ echo $?
+    1
 
   Grab width or height attributes:
   

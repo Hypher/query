@@ -99,6 +99,11 @@ function parse(html, calls) {
           case 'parent':
             ctx = ctx.parent();
             break;
+          case 'hasClass':
+            var ret;
+            console.log(ret = ctx[call[1]].apply(ctx, call[2]));
+            process.exit(ret ? 0 : 1);
+            break;
           case 'width':
           case 'height':
             // TODO: fix me! jsdom breakage
@@ -107,7 +112,6 @@ function parse(html, calls) {
           case 'val':
           case 'attr':
           case 'text':
-          case 'hasClass':
             console.log(ctx[call[1]].apply(ctx, call[2]));
             process.exit();
             break;
