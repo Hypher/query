@@ -64,6 +64,7 @@ function parseArguments() {
       case 'get':
         arg = 'eq';
       case 'eq':
+      case 'is':
       case 'attr':
       case 'hasClass':
         calls.push(['method', arg, required(1)])
@@ -109,6 +110,7 @@ function parse(html, calls) {
           case 'parent':
             ctx = ctx.parent();
             break;
+          case 'is':
           case 'hasClass':
             var ret;
             console.log(ret = ctx[call[1]].apply(ctx, call[2]));

@@ -64,3 +64,8 @@
   
     $ echo '<ul><li></li><li></li></ul>' | query li length
     2
+
+  `is()` support:
+  
+    $ curl http://twitter.com | query script is '[type=text/javascript]'
+    true
