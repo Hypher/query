@@ -59,3 +59,8 @@
   
     $ echo $list | query ul li get 1 next text
     three
+
+  Get length:
+  
+    $ echo '<ul><li></li><li></li></ul>' | query li length
+    2

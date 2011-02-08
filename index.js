@@ -47,6 +47,9 @@ function parseArguments() {
 
   while (args.length) {
     switch (arg = args.shift()) {
+      case 'length':
+        calls.push(['getter', arg]);
+        break;
       case 'val':
       case 'text':
       case 'first':
@@ -87,6 +90,13 @@ function parse(html, calls) {
 
   while (call = calls.shift()) {
     switch (call[0]) {
+      case 'getter':
+        switch (call[1]) {
+          case 'length':
+            console.log(ctx[call[1]]);
+            process.exit();
+        }
+        break;
       case 'method':
         switch (call[1]) {
           case 'eq':
