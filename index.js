@@ -31,6 +31,33 @@ stdin
   .on('end', parseArguments);
 
 /**
+ * Supported "commands".
+ */
+
+var commands = {
+    length:   { type: 'property' }
+  , val:      { type: 'method', arity: 0 }
+  , text:     { type: 'method', arity: 0 }
+  , first:    { type: 'method', arity: 0 }
+  , last:     { type: 'method', arity: 0 }
+  , width:    { type: 'method', arity: 0 }
+  , height:   { type: 'method', arity: 0 }
+  , next:     { type: 'method', arity: 0 }
+  , prev:     { type: 'method', arity: 0 }
+  , eq:       { type: 'method', arity: 1 }
+  , is:       { type: 'method', arity: 1 }
+  , attr:     { type: 'method', arity: 1 }
+  , hasClass: { type: 'method', arity: 1 }
+};
+
+/**
+ * Command aliases.
+ */
+
+commands.len = commands.count = commands.length;
+commands.get = commands.eq;
+
+/**
  * Parse argv.
  */
 
