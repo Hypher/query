@@ -42,9 +42,9 @@ var commands = {
   , width:    { type: 'method', arity: 0 }
   , height:   { type: 'method', arity: 0 }
   , last:     { type: 'method traverse', arity: 0 }
-  , parent:   { type: 'method traverse', arity: 0 }
-  , next:     { type: 'method traverse', arity: 0 }
-  , prev:     { type: 'method traverse', arity: 0 }
+  , parent:   { type: 'method traverse', arity: 0, optional: 1 }
+  , next:     { type: 'method traverse', arity: 0, optional: 1 }
+  , prev:     { type: 'method traverse', arity: 0, optional: 1 }
   , eq:       { type: 'method traverse', arity: 1 }
   , is:       { type: 'method bool', arity: 1 }
   , attr:     { type: 'method bool', arity: 1 }
@@ -71,7 +71,8 @@ function parseArguments() {
     , calls = []
     , alias
     , arg
-    , cmd;
+    , cmd
+    , pendingArgs = 0;
 
   function required() {
     if (args.length) return args.shift();
@@ -93,10 +94,17 @@ function parseArguments() {
           cmd.args.push(required());
         }
       }
+      pendingArgs = cmd.optional||0;
       calls.push(cmd);
     // selector
     } else {
-      calls.push({ type: 'selector', val: arg });
+      if(pendingArgs > 0) {
+        calls[calls.length-1].args.push(arg);
+        pendingArgs--;
+      } else {
+        calls.push({ type: 'selector', val: arg });
+        pendingArgs = 0;
+      }
     }
   }
 
