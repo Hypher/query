@@ -39,13 +39,13 @@ var commands = {
   , val:      { type: 'method', arity: 0 }
   , text:     { type: 'method', arity: 0 }
   , first:    { type: 'method', arity: 0 }
-  , last:     { type: 'method', arity: 0 }
   , width:    { type: 'method', arity: 0 }
   , height:   { type: 'method', arity: 0 }
-  , parent:   { type: 'method', arity: 0 }
-  , next:     { type: 'method', arity: 0 }
-  , prev:     { type: 'method', arity: 0 }
-  , eq:       { type: 'method', arity: 1 }
+  , last:     { type: 'method traverse', arity: 0 }
+  , parent:   { type: 'method traverse', arity: 0 }
+  , next:     { type: 'method traverse', arity: 0 }
+  , prev:     { type: 'method traverse', arity: 0 }
+  , eq:       { type: 'method traverse', arity: 1 }
   , is:       { type: 'method bool', arity: 1 }
   , attr:     { type: 'method bool', arity: 1 }
   , hasClass: { type: 'method bool', arity: 1 }
@@ -123,6 +123,9 @@ function parse(html, calls) {
         console.log(ctx[call.name]);
         process.exit();
       case 'method':
+        console.log(ctx[call.name].apply(ctx, call.args));
+        process.exit();
+      case 'method traverse':
         ctx = ctx[call.name].apply(ctx, call.args);
         break;
       case 'method bool':
@@ -130,7 +133,6 @@ function parse(html, calls) {
         process.exit(ret ? 0 : 1);
     }
   }
-
   console.log(ctx.html());  
 }
 
