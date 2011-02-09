@@ -6,6 +6,9 @@
   "author": "TJ Holowaychuk",
   "main": "index",
   "bin": { "query": "./index.js" },
+  "dependencies": {
+    "jsdom": ">= 0.1.0"
+  },
   "engines": {
     "node": "*"
   }
