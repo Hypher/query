@@ -59,6 +59,7 @@ var aliases = {
     len: 'length'
   , count: 'length'
   , get: 'eq'
+  , 'has-class': 'hasClass'
 };
 
 /**
@@ -130,6 +131,7 @@ function parse(html, calls) {
         break;
       case 'method bool':
         var ret = ctx[call.name].apply(ctx, call.args);
+        console.log(ret);
         process.exit(ret ? 0 : 1);
     }
   }
