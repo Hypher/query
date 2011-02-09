@@ -42,62 +42,60 @@ var commands = {
   , last:     { type: 'method', arity: 0 }
   , width:    { type: 'method', arity: 0 }
   , height:   { type: 'method', arity: 0 }
+  , parent:   { type: 'method', arity: 0 }
   , next:     { type: 'method', arity: 0 }
   , prev:     { type: 'method', arity: 0 }
   , eq:       { type: 'method', arity: 1 }
-  , is:       { type: 'method', arity: 1 }
-  , attr:     { type: 'method', arity: 1 }
-  , hasClass: { type: 'method', arity: 1 }
+  , is:       { type: 'method bool', arity: 1 }
+  , attr:     { type: 'method bool', arity: 1 }
+  , hasClass: { type: 'method bool', arity: 1 }
 };
 
 /**
  * Command aliases.
  */
 
-commands.len = commands.count = commands.length;
-commands.get = commands.eq;
+var aliases = {
+    len: 'length'
+  , count: 'length'
+  , get: 'eq'
+};
 
 /**
  * Parse argv.
  */
 
 function parseArguments() {
-  var arg
-    , args = process.argv.slice(2)
-    , calls = [];
+  var args = process.argv.slice(2)
+    , calls = []
+    , alias
+    , arg
+    , cmd;
 
   function required() {
-    if (args.length) return [args.shift()];
-    console.log(arg + ' requires an argument');
+    if (args.length) return args.shift();
+    console.error(arg + ' requires an argument');
     process.exit(1);
   }
 
   while (args.length) {
-    switch (arg = args.shift()) {
-      case 'length':
-        calls.push(['getter', arg]);
-        break;
-      case 'val':
-      case 'text':
-      case 'first':
-      case 'last':
-      case 'width':
-      case 'height':
-      case 'parent':
-      case 'next':
-      case 'prev':
-        calls.push(['method', arg, []])
-        break;
-      case 'get':
-        arg = 'eq';
-      case 'eq':
-      case 'is':
-      case 'attr':
-      case 'hasClass':
-        calls.push(['method', arg, required(1)])
-        break;
-      default:
-        calls.push(['selector', arg])
+    arg = args.shift();
+    alias = aliases[arg];
+    // command
+    if (cmd = commands[arg] || commands[alias]) {
+      cmd = clone(cmd);
+      cmd.name = alias || arg;
+      cmd.args = [];
+      // arguments required
+      if (cmd.arity) {
+        for (var i = 0; i < cmd.arity; ++i) {
+          cmd.args.push(required());
+        }
+      }
+      calls.push(cmd);
+    // selector
+    } else {
+      calls.push({ type: 'selector', val: arg });
     }
   }
 
@@ -117,51 +115,33 @@ function parse(html, calls) {
     , call;
 
   while (call = calls.shift()) {
-    switch (call[0]) {
-      case 'getter':
-        switch (call[1]) {
-          case 'length':
-            console.log(ctx[call[1]]);
-            process.exit();
-        }
-        break;
-      case 'method':
-        switch (call[1]) {
-          case 'eq':
-          case 'first':
-          case 'last':
-          case 'prev':
-          case 'next':
-            ctx = ctx[call[1]].apply(ctx, call[2]);
-            break;
-          case 'parent':
-            ctx = ctx.parent();
-            break;
-          case 'is':
-          case 'hasClass':
-            var ret;
-            console.log(ret = ctx[call[1]].apply(ctx, call[2]));
-            process.exit(ret ? 0 : 1);
-            break;
-          case 'width':
-          case 'height':
-            // TODO: fix me! jsdom breakage
-            call[2][0] = call[1];
-            call[1] = 'attr';
-          case 'val':
-          case 'attr':
-          case 'text':
-            console.log(ctx[call[1]].apply(ctx, call[2]));
-            process.exit();
-            break;
-        }
-        break;
+    switch (call.type) {
       case 'selector':
-        ctx = ctx.find(call[1]);
+        ctx = ctx.find(call.val);
+        break;
+      case 'property':
+        console.log(ctx[call.name]);
+        process.exit();
+      case 'method':
+        ctx = ctx[call.name].apply(ctx, call.args);
+        break;
+      case 'method bool':
+        var ret = ctx[call.name].apply(ctx, call.args);
+        process.exit(ret ? 0 : 1);
     }
   }
 
   console.log(ctx.html());  
+}
+
+/**
+ * Clone `obj`.
+ */
+
+function clone(obj) {
+  var clone = {};
+  for (var key in obj) clone[key] = obj[key];
+  return clone;
 }
 
 /**
