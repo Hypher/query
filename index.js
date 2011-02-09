@@ -74,7 +74,7 @@ function parseArguments() {
 
   function required() {
     if (args.length) return args.shift();
-    console.error(arg + ' requires an argument');
+    console.error(arg + ' requires ' + cmd.arity + ' argument(s)');
     process.exit(1);
   }
 
