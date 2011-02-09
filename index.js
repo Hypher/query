@@ -72,7 +72,8 @@ function parseArguments() {
     , alias
     , arg
     , cmd
-    , pendingArgs = 0;
+    , pendingArgs = 0
+    , noMoreArgs;
 
   function required() {
     if (args.length) return args.shift();
@@ -83,6 +84,13 @@ function parseArguments() {
   while (args.length) {
     arg = args.shift();
     alias = aliases[arg];
+    // no more args?
+    if(arg[arg.length-1] == ',') {
+      noMoreArgs = true;
+      arg = arg.substr(0, arg.length-1);
+    } else {
+      noMoreArgs = false;
+    }
     // command
     if (cmd = commands[arg] || commands[alias]) {
       cmd = clone(cmd);
@@ -94,7 +102,7 @@ function parseArguments() {
           cmd.args.push(required());
         }
       }
-      pendingArgs = cmd.optional||0;
+      pendingArgs = noMoreArgs ? 0 : cmd.optional||0;
       calls.push(cmd);
     // selector
     } else {
