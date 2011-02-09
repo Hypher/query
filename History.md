@@ -1,4 +1,11 @@
 
+n.n.n / 2011-02-08 
+==================
+
+  * Added `has-class` alias of `hasClass`
+  * Added `is` support
+  * Added `length` support (aliased as `len`, and `count`)
+
 0.0.3 / 2011-02-08 
 ==================
 

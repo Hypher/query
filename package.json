@@ -1,7 +1,7 @@
 {
   "name": "query",
   "description": "command-line jquery",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "keywords": ["jquery", "html", "jsdom", "dom"],
   "author": "TJ Holowaychuk",
   "main": "index",
